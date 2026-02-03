@@ -1,0 +1,253 @@
+---
+title: "pre_lab_01.Rmd"
+author: "Derek Willis"
+date: "2025-01-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen=999)
+```
+
+## About this notebook
+
+This notebook contains code and explanatory text that your should review and run as you read through chapters 8 and 10 of the course textbook, "Data Journalism with R and the Tidyverse". Answer questions and edit the document as directed.
+
+Running this notebook will help you understand key data analysis methods and concepts that you will put into practice during this week's lab. When you come across a new command or verb in R, you should add it to your class reference notebook file along with what it's used for.
+
+When you are finished running the code in this notebook, you will push changes to your course GitHub repo, and upload the link to ELMS as instructed.
+
+You also should update your class reference notebook with code examples and what they mean. When you come across a new concept or R verb, put it in your reference notebook along with a sentence about what it does. For example:
+
+```{r}
+library(tidyverse)
+```
+
+The library function loads an R library such as the tidyverse, providing access to the verbs and functions that library contains. You have to load a library before you can use its functions.
+
+## Instructor in class demonstration outline
+
+-   Load this notebook, and provide overview of R, RStudio (text editor, console, environment window, file explorer), Rmarkdown data notebooks, the reference notebook.
+-   Work through the code below, chapter by chapter.
+    -   Chapter 8: explain the console and the concept of variables. Explain packages, the Tidyverse, how to install them.
+    -   Chapter 10: explain loading libraries, the concept of functions, loading data, the importance of having questions to guide data analysis, and aggregation and summarization.
+
+## Chapter 8
+
+### Task 1: The console
+
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
+
+### Task 2: Variables
+
+**Task** Put the following code -- which stores the numeral 2 as a variable called number -- in the console and hit enter.
+
+```{r}
+number <- 2
+```
+
+Then type this code to multiply the variable called number by itself.
+
+```{r}
+number * number
+```
+
+What does it return? Type your answer below:
+
+**Answer:** 4
+
+### Task 3: Install packages
+
+**Task** In the console, run the following code to install the Tidyverse:
+
+```{r}
+install.packages('tidyverse')
+```
+
+**Task** Add that
+
+Then run the following code to install the rmarkdown library
+
+```{r}
+install.packages('rmarkdown')
+```
+
+### Task 4: Load libraries
+
+**Task** Run the following code in the gray-colored codeblock below -- not in the console -- to load the tidyverse library. To run the code, click the little green play button (left facing arrow) at the top right of the codeblock. In Rmarkdown data notebooks, we write code inside of codeblocks, and explanatory text in the white area outside of it.
+
+```{r}
+
+```
+
+
+```{r}
+# This is a comment inside of a codeblock. Comments doesn't run when we run the codeblock.
+# Adding this command is a good way to start your class reference notebook.
+library(tidyverse)
+```
+
+## Chapter 10
+
+### Task 5: Load data
+
+**Task** Load the Maryland churches data by running the following codeblock. The data is contained in a CSV file, which is like a spreadsheet.
+
+```{r}
+md_churches <- read_csv("churches_md.csv")
+```
+
+Once it loads, look at the environment window at right in RStudio for md_churches It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
+
+**Answer**
+
+### Task 6: Glimpse data
+
+**Task** Run the following codeblock to use glimpse() to get a sense of the data, some of the values in each field/variable/column, and the data types of each field/variable/column.
+
+```{r}
+glimpse(md_churches)
+```
+
+In the space below, write the datatype for the "EIN" column and the "ASSET_AMT" column (it's in light gray, offset by \< \>). **Answer**
+
+### Task 7: Examine data "head"
+
+**Task** Run the following codeblock to use head() to examine the first six rows of data. Explore the data by clicking the black arrow on the right side of the output table, allowing you to examine additional columns.
+
+```{r}
+head(md_churches)
+```
+
+In the space below, write the name of the church from the first row of the "name" column. **Answer**
+
+### Task 8: Explore data with interactive dataframe
+
+**Task** look at the environment window at right in RStudio for md_churches It's next to a small blue circle with a white arrow in it. Click on the md_churches -- not the blue circle. It will open the dataframe as an interactive table. Scroll down to see additional rows. Scroll left to see additional columns. Click on a column name to sort by that column.
+
+### Task 9: Group and count
+
+So what if we wanted to know how many churches were in each city?
+
+To do that by hand, we'd have to take each of the 7,314 individual rows (or observations or records) and sort them into a pile. We'd put them in groups -- one for each city -- and then count them. To do this, we'll take our dataset and we'll introduce a new operator: `|>`. The best way to read that operator, in my opinion, is to interpret that as "and then do this." The keyboard shortcut for this is cmd-shift-m on the Mac and ctrl-shift-m on Windows. Don't like that character? R now has a new one that does the same thing: `|>`.
+
+**Task** Run the following codeblock:
+
+```{r}
+md_churches |>
+  group_by(CITY) |>
+  summarise(
+    churches = n()
+  )
+```
+
+Describe what you think each line of this code is doing below, based on the result:
+
+**Answer**
+
+### Task 10: Adding arrange to sort the data
+
+When we run that, we get a list of cities with a count next to them. But it's not in any order.
+
+So we'll add another "and then do this" symbol -- \|\> -- and use a new function called `arrange()`. Arrange does what you think it does -- it arranges data in order. By default, it's in ascending order -- smallest to largest. But if we want to know the city with the most churches, we need to sort it in descending order. That looks like this:
+
+**Task** Run the following codeblock:
+
+```{r}
+md_churches |>
+  group_by(CITY) |>
+  summarise(
+    count = n()
+  ) |>
+  arrange(desc(count))
+```
+
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+
+### Task 11: Grouping by multiple columns
+
+**Task** Run the following codeblock.
+
+```{r}
+md_churches |>
+  group_by(CITY, zip5) |>
+  summarise(
+    count = n()
+  ) |>
+  arrange(desc(count))
+```
+
+Compared to the previous codeblock, how did the output change and what in the code changed it?
+
+**Answer**
+
+### Task 12: Other summary functions
+
+In the last example, we grouped like records together and counted them, but there's so much more we can do to summarize each group.
+
+To do that, we'll load an use a different CSV file - this one of "mega-churches". These are churches with large congregations, often in the thousands. This data set comes from [Hartford International University](https://hirr.hartfordinternational.edu/research/megachurch-database/full-list-of-megachurches/) and contains information about the church name, city, state, attendance, denomination and website. Let's load it and take a look at the first few rows:
+
+**Task** Run the following codeblock:
+
+```{r}
+megachurches <- read_csv("megachurches.csv")
+head(megachurches)
+```
+
+Now let's say we wanted to know the total attendance for each denomination? For that, we could use the `sum()` function to add up all of the values in the column "size". We group by `denomination` and put the column we want to total -- `size` -- inside the sum() function `sum(size)` and give it a name -- `total_size` -- like this:
+
+### Task 13: different kinds of summarizations
+
+**Task** Run the following codeblock to group the umd_courses dataframe by term. Then do the following summarizations for each term: count the number of courses, add up the total of all seats, and calculate the mean and median contribution number of seats. Then sort so the term with the most total seats is listed first.
+
+```{r}
+megachurches |>
+  group_by(denomination) |>
+  summarise(
+    total_size = sum(size)
+  ) |>
+  arrange(desc(total_size))
+```
+
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer**
+
+### Task 14: more aggregations
+
+We can also calculate the average size of megachurches in each denomination using the `mean()` function, and add the `median`, too, like this:
+
+**Task** Run the following codeblock to group the umd_courses dataframe by the department. Then do the following summarizations for each group: count the number of courses, add up the total of all seats, calculate the mean and median number of seats and then add lines to calculate the smallest and largest seat numbers using the `min()` and `max()` functions. Then sort so the department with the largest total number of seats is listed first.
+
+```{r}
+megachurches |>
+  group_by(denomination) |>
+  summarise(
+    total_size = sum(size),
+    mean_size = mean(size),
+    median_size = median(size),
+    # min here
+    # max here
+  ) |>
+  arrange(desc(total_size))
+```
+
+It would be interesting to see what the church with the largest size is. To do that, we can just use `arrange()` on the whole dataset, like this:\`
+
+```{r}
+megachurches |>
+  arrange(desc(size))
+```
+
+85,000 people is a big congregation. 
+
+### Task 12: Questions
+
+What else could we ask of this data? Give me three questions of either the `md_churches` data or the `megachurches` data. No code, just questions
+
+**Answer**
+
+1.  
+
+2.  
+
+3.  
